@@ -60,9 +60,9 @@ def index():
 @app.route('/download', methods=['POST'])
 def download():
     env_content = request.form.get('env_content', '')
-    secret_name = secure_filename(request.form.get('secret_name', 'my-secret'))
+    secret_name = secure_filename(request.form.get('secret_name', 'my-secret'))  # Sanitize the secret name
     namespace = request.form.get('namespace', 'default')
-    
+
     env_dict = parse_env(env_content)
     secret_json = {
         "kind": "Secret",
@@ -74,11 +74,12 @@ def download():
         "type": "Opaque",
         "data": env_dict
     }
-    
+
     json_output = json.dumps(secret_json, indent=4)
     file_download = BytesIO(json_output.encode())
     file_download.seek(0)
-    
+
+    # Ensure the filename is safe
     safe_filename = secure_filename(f"{secret_name}.json")
     return send_file(file_download, mimetype='application/json', as_attachment=True, download_name=safe_filename)
 
