@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kubernetes Secret Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <h2>Kubernetes Secret Generator</h2>
+    <form method="post">
+        <label for="secret_name">Secret Name:</label>
+        <input type="text" id="secret_name" name="secret_name" value="{{ secret_name }}" required>
+        <br><br>
+        <label for="namespace">Namespace:</label>
+        <input type="text" id="namespace" name="namespace" value="{{ namespace }}" required>
+        <br><br>
+        <label for="env_content">Paste .env content:</label>
+        <textarea id="env_content" name="env_content"></textarea>
+        <br>
+        <button type="submit">Generate Secret</button>
+    </form>
+    
+    {% if json_output %}
+    <h3>Generated Kubernetes Secret:</h3>
+    <pre>{{ json_output }}</pre>
+    
+    <form action="/download" method="post">
+        <input type="hidden" name="env_content" value="{{ request.form['env_content'] }}">
+        <input type="hidden" name="secret_name" value="{{ request.form['secret_name'] }}">
+        <input type="hidden" name="namespace" value="{{ request.form['namespace'] }}">
+        <button type="submit">Download JSON</button>
+    </form>
+    {% endif %}
+</body>
+</html>
