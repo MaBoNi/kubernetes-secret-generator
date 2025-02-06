@@ -1,5 +1,5 @@
 services:
-  secret-generator:
+  kubernetes-secret-generator:
     build: .
     ports:
       - "5050:5000"
