@@ -79,7 +79,8 @@ def download():
     file_download = BytesIO(json_output.encode())
     file_download.seek(0)
     
-    return send_file(file_download, mimetype='application/json', as_attachment=True, download_name=f"{secret_name}.json")
+    safe_filename = secure_filename(f"{secret_name}.json")
+    return send_file(file_download, mimetype='application/json', as_attachment=True, download_name=safe_filename)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=False)
