@@ -82,4 +82,4 @@ def download():
     return send_file(file_download, mimetype='application/json', as_attachment=True, download_name=f"{secret_name}.json")
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=False)
