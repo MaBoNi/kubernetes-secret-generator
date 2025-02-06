@@ -7,15 +7,21 @@ from io import BytesIO
 app = Flask(__name__)
 
 def parse_env(env_content):
-    """Parses .env content and converts it to a dictionary"""
+    """Parses .env content and converts it to a dictionary, supporting both '=' and ':' separators"""
     env_dict = {}
     for line in env_content.splitlines():
         line = line.strip()
         if not line or line.startswith("#"):  # Ignore empty lines and comments
             continue
-        if "=" not in line:  # Skip lines without an "="
-            continue
-        key, value = line.split("=", 1)  # Split only on the first '='
+        
+        # Support both '=' and ':' as separators
+        if "=" in line:
+            key, value = line.split("=", 1)
+        elif ":" in line:
+            key, value = line.split(":", 1)
+        else:
+            continue  # Skip lines without a valid separator
+        
         key, value = key.strip(), value.strip().strip('"')
         env_dict[key] = base64.b64encode(value.encode()).decode()
     return env_dict
