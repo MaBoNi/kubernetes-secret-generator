@@ -1,3 +1,5 @@
+version: 2
+
 updates:
   # Scan for Docker updates in Dockerfile
   - package-ecosystem: "docker"
