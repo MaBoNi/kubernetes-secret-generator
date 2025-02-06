@@ -1,4 +1,5 @@
 from flask import Flask, request, render_template, jsonify, send_file
+from werkzeug.utils import secure_filename
 import base64
 import json
 import os
@@ -59,7 +60,7 @@ def index():
 @app.route('/download', methods=['POST'])
 def download():
     env_content = request.form.get('env_content', '')
-    secret_name = request.form.get('secret_name', 'my-secret')
+    secret_name = secure_filename(request.form.get('secret_name', 'my-secret'))
     namespace = request.form.get('namespace', 'default')
     
     env_dict = parse_env(env_content)
