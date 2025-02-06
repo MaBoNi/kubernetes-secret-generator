@@ -11,10 +11,10 @@ jobs:
 
     steps:
       - name: Check out code
-        uses: actions/checkout@c5f0d33a7e896b921b02108de11cfa88e2f1cfae # v4
+        uses: actions/checkout@c5f0d33a7e896b921b02108de11cfa88e2f1cfae
 
       - name: Log in to Docker Hub
-        uses: docker/login-action@f313525dc8f586e765cfb329f09ac02c33f5d49b # v3
+        uses: docker/login-action@f313525dc8f586e765cfb329f09ac02c33f5d49b
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
@@ -30,11 +30,32 @@ jobs:
           VERSION_TAG="${VERSION}-${DATE_TAG}"
           echo "tag=${VERSION_TAG}" >> $GITHUB_ENV
 
-      - name: Build Docker image
+      - name: Cache pip dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
         run: |
-          docker build -t maboni82/kubernetes-secret-generator:latest -t maboni82/kubernetes-secret-generator:${{ env.tag }} .
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          tags: maboni82/kubernetes-secret-generator:latest,maboni82/kubernetes-secret-generator:${{ env.tag }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Push Docker images to Docker Hub
-        run: |
-          docker push maboni82/kubernetes-secret-generator:latest
-          docker push maboni82/kubernetes-secret-generator:${{ env.tag }}
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: maboni82/kubernetes-secret-generator:latest,maboni82/kubernetes-secret-generator:${{ env.tag }}
+          cache-from: type=gha
