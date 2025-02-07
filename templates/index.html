@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kubernetes Secret Generator</title>
+    <title>Kubernetes Secret JSON Generator</title>
+    <link rel="icon" href="https://bondit.services/wp-content/uploads/2024/04/favcion-bondit.webp" type="image/x-icon">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -21,22 +22,22 @@
     </style>
 </head>
 <body>
-    <h2>Kubernetes Secret Generator</h2>
+    <h2>Kubernetes Secret JSON Generatorr</h2>
     <form method="post">
-        <label for="secret_name">Secret Name:</label>
+        <label for="secret_name">Meta Name:</label>
         <input type="text" id="secret_name" name="secret_name" value="{{ secret_name }}" required>
         <br><br>
-        <label for="namespace">Namespace:</label>
+        <label for="namespace">Meta Namespace:</label>
         <input type="text" id="namespace" name="namespace" value="{{ namespace }}" required>
         <br><br>
         <label for="env_content">Paste .env content:</label>
         <textarea id="env_content" name="env_content"></textarea>
         <br>
-        <button type="submit">Generate Secret</button>
+        <button type="submit">Generate Secret in JSON</button>
     </form>
     
     {% if json_output %}
-    <h3>Generated Kubernetes Secret:</h3>
+    <h3>Generated Kubernetes Secret Manifest:</h3>
     <pre>{{ json_output }}</pre>
     
     <form action="/download" method="post">
@@ -46,5 +47,10 @@
         <button type="submit">Download JSON</button>
     </form>
     {% endif %}
+
+    <footer>
+        <p><a href="https://github.com/MaBoNi/kubernetes-secret-generator" target="_blank">GitHub Repository</a></p>
+        <p>&copy; 2024 BondIT ApS. All rights reserved.</p>
+    </footer>
 </body>
 </html>
