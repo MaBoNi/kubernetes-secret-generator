@@ -1,6 +1,7 @@
 from flask import Flask, request, render_template, jsonify, send_file
 from werkzeug.utils import secure_filename
 import base64
+import re
 import json
 import os
 from io import BytesIO
@@ -8,23 +9,20 @@ from io import BytesIO
 app = Flask(__name__)
 
 def parse_env(env_content):
-    """Parses .env content and converts it to a dictionary, supporting both '=' and ':' separators"""
+    """Parses .env content and converts it to a dictionary using regex, ensuring correct key-value extraction."""
     env_dict = {}
-    for line in env_content.splitlines():
-        line = line.strip()
-        if not line or line.startswith("#"):  # Ignore empty lines and comments
-            continue
-        
-        # Support both '=' and ':' as separators
-        if "=" in line:
-            key, value = line.split("=", 1)
-        elif ":" in line:
-            key, value = line.split(":", 1)
-        else:
-            continue  # Skip lines without a valid separator
-        
-        key, value = key.strip(), value.strip().strip('"')
-        env_dict[key] = base64.b64encode(value.encode()).decode()
+    
+    # Regex pattern to extract key-value pairs
+    pattern = re.compile(r'([^:\s]+):\s*"([^"]+)"')
+
+    for match in pattern.finditer(env_content):
+        key = match.group(1).strip()  # Extract key
+        value = match.group(2).strip()  # Extract value inside quotes
+
+        # Ensure Base64 encoding for all extracted values
+        encoded_value = base64.b64encode(value.encode()).decode()
+        env_dict[key] = encoded_value
+
     return env_dict
 
 @app.route('/', methods=['GET', 'POST'])
